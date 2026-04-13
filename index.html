@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClipForge - محرر فيديو أونلاين مجاني | تحويل لـ TikTok & Reels</title>
+<meta name="description" content="قطّع وحوّل فيديوهاتك لـ TikTok وReels أونلاين مجاناً. أداة سريعة وسهلة بدون تحميل برامج.">
+<meta name="keywords" content="video editor online, cut video online, convert video to TikTok, video to reels converter, محرر فيديو, تحويل فيديو تيك توك">
+<meta property="og:title" content="ClipForge - محرر فيديو أونلاين">
+<meta property="og:description" content="قطّع وحوّل فيديوهاتك لـ TikTok وReels أونلاين مجاناً">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="photo_2026-04-13_19-40-39.png">
+<link rel="apple-touch-icon" href="photo_2026-04-13_19-40-39.png">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --accent: #00f5a0;
+    --accent2: #00d4f5;
+    --accent3: #f500a0;
+    --text: #f0f0f5;
+    --text2: #9090aa;
+    --border: rgba(255,255,255,0.08);
+    --card: rgba(255,255,255,0.04);
+    --glow: 0 0 30px rgba(0,245,160,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%;
+    height: 64px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: -1px;
+  }
+  .logo span { color: var(--accent2); }
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: var(--bg) !important;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 700 !important;
+  }
+  .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+  .hamburger span { width:24px; height:2px; background:var(--text); border-radius:2px; transition:0.3s; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 100px 5% 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 40%, rgba(0,245,160,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 60%, rgba(0,212,245,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 50% 10%, rgba(245,0,160,0.05) 0%, transparent 60%);
+  }
+  .grid-bg {
+    position: absolute; inset: 0; z-index: 0; opacity: 0.03;
+    background-image: linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero > * { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,245,160,0.1);
+    border: 1px solid rgba(0,245,160,0.3);
+    padding: 6px 16px; border-radius: 100px;
+    font-size: 0.8rem; color: var(--accent); font-weight: 600;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before { content:''; width:6px; height:6px; background:var(--accent); border-radius:50%; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  h1.hero-title {
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero-title .line1 { display:block; color: var(--text); }
+  .hero-title .line2 {
+    display: block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--text2);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,245,160,0.35); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); background: rgba(0,245,160,0.05); }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family:'Space Mono',monospace; font-size:1.8rem; font-weight:700; color:var(--accent); }
+  .stat-label { font-size:0.8rem; color:var(--text2); margin-top:4px; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── FEATURES ─── */
+  section { padding: 80px 5%; }
+  .section-label {
+    font-family:'Space Mono',monospace;
+    font-size:0.75rem; color:var(--accent); letter-spacing:3px;
+    text-transform:uppercase; margin-bottom:1rem;
+  }
+  h2.section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800; margin-bottom: 1rem;
+  }
+  .section-sub { color:var(--text2); font-size:1rem; line-height:1.8; max-width:500px; }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0,245,160,0.3);
+    box-shadow: var(--glow);
+  }
+  .feature-icon {
+    width: 48px; height: 48px;
+    background: rgba(0,245,160,0.1);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1.2rem;
+  }
+  .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .feature-card p { color: var(--text2); font-size: 0.9rem; line-height: 1.7; }
+
+  /* ─── HOW IT WORKS ─── */
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    margin-top: 3rem;
+    position: relative;
+  }
+  .steps-container::before {
+    content:'';
+    position:absolute; top:32px; left:10%; right:10%; height:1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity:0.3;
+  }
+  .step {
+    text-align: center; padding: 2rem 1.5rem;
+    position: relative; z-index: 1;
+  }
+  .step-num {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family:'Space Mono',monospace; font-size:1.2rem; font-weight:700; color:var(--accent);
+    margin: 0 auto 1.2rem;
+    transition: background 0.3s;
+  }
+  .step:hover .step-num { background: rgba(0,245,160,0.15); }
+  .step h3 { font-size:1rem; font-weight:700; margin-bottom:0.5rem; }
+  .step p { color:var(--text2); font-size:0.85rem; line-height:1.7; }
+
+  /* ─── TOOL PAGE ─── */
+  .tool-section { background: var(--bg2); }
+  .tool-wrapper {
+    max-width: 900px; margin: 0 auto;
+  }
+  .upload-zone {
+    border: 2px dashed rgba(0,245,160,0.3);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,245,160,0.04);
+  }
+  .upload-zone input[type=file] {
+    position:absolute; inset:0; opacity:0; cursor:pointer;
+  }
+  .upload-icon { font-size:3rem; margin-bottom:1rem; }
+  .upload-zone h3 { font-size:1.3rem; font-weight:700; margin-bottom:0.5rem; }
+  .upload-zone p { color:var(--text2); font-size:0.9rem; }
+  .upload-zone .formats {
+    margin-top:1rem;
+    display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+  }
+  .badge {
+    background:rgba(255,255,255,0.06);
+    border:1px solid var(--border);
+    padding:4px 10px; border-radius:6px; font-size:0.75rem; color:var(--text2);
+  }
+  .editor-panel { display:none; margin-top:2rem; }
+  .editor-panel.visible { display:block; }
+  .video-preview-wrap {
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  #videoPreview { width:100%; max-height:400px; display:block; }
+  .controls-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .control-group label {
+    display:block; font-size:0.8rem; color:var(--text2); margin-bottom:6px; font-weight:600;
+  }
+  .control-group input[type=number], .control-group input[type=text], .control-group select {
+    width:100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .control-group input:focus, .control-group select:focus { border-color: var(--accent); }
+  .options-row {
+    display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem;
+  }
+  .toggle-card {
+    flex:1; min-width:180px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:1rem;
+    cursor:pointer;
+    transition:border-color 0.2s, background 0.2s;
+    display:flex; align-items:center; gap:10px;
+  }
+  .toggle-card.active { border-color:var(--accent); background:rgba(0,245,160,0.07); }
+  .toggle-card .ico { font-size:1.5rem; }
+  .toggle-card .info { flex:1; }
+  .toggle-card .info strong { font-size:0.9rem; display:block; }
+  .toggle-card .info span { font-size:0.75rem; color:var(--text2); }
+  .action-btns { display:flex; gap:1rem; flex-wrap:wrap; }
+  .btn-tool {
+    flex:1; min-width:140px;
+    padding:14px;
+    border-radius:10px;
+    font-family:'Cairo',sans-serif;
+    font-size:1rem; font-weight:700;
+    cursor:pointer; border:none;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-process { background:var(--accent); color:var(--bg); }
+  .btn-process:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,245,160,0.3); }
+  .btn-download { background:var(--accent2); color:var(--bg); }
+  .btn-download:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,212,245,0.3); }
+  .btn-download:disabled { opacity:0.4; cursor:not-allowed; transform:none; box-shadow:none; }
+  .progress-wrap { display:none; margin-top:1.2rem; }
+  .progress-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .progress-label { font-size:0.85rem; color:var(--text2); font-weight:600; }
+  .progress-pct { font-family:'Space Mono',monospace; font-size:1rem; font-weight:700; color:var(--accent); }
+  .progress-bar {
+    height:8px; background:var(--bg3); border-radius:100px; overflow:hidden;
+    position:relative;
+  }
+  .progress-fill {
+    height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:100px; transition:width 0.15s linear; width:0%;
+  }
+  .progress-bar::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.15) 50%,transparent 100%);
+    animation:shimmer 1.2s infinite;
+    display:none;
+  }
+  .progress-bar.running::after { display:block; }
+  @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
+  .progress-stage { font-size:0.78rem; color:var(--text2); margin-top:6px; text-align:left; }
+  .result-canvas-wrap { display:none; margin-top:1rem; }
+  #resultCanvas { max-width:100%; border-radius:12px; }
+  .result-video-wrap { display:none; margin-top:1rem; }
+  #resultVideo { max-width:100%; border-radius:12px; background:#000; width:100%; }
+
+  /* ─── BLOG ─── */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .blog-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    text-decoration: none; color: var(--text);
+    display: block;
+  }
+  .blog-card:hover { transform:translateY(-4px); border-color:rgba(0,245,160,0.3); }
+  .blog-thumb {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    position: relative; overflow: hidden;
+  }
+  .blog-thumb.b1 { background:linear-gradient(135deg,rgba(0,245,160,0.15),rgba(0,212,245,0.1)); }
+  .blog-thumb.b2 { background:linear-gradient(135deg,rgba(245,0,160,0.15),rgba(245,160,0,0.1)); }
+  .blog-thumb.b3 { background:linear-gradient(135deg,rgba(0,212,245,0.15),rgba(0,100,255,0.1)); }
+  .blog-thumb.b4 { background:linear-gradient(135deg,rgba(245,160,0,0.15),rgba(245,80,0,0.1)); }
+  .blog-body { padding: 1.5rem; }
+  .blog-cat {
+    font-size:0.72rem; color:var(--accent); font-weight:700;
+    text-transform:uppercase; letter-spacing:2px; margin-bottom:0.6rem;
+  }
+  .blog-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.5rem; line-height:1.5; }
+  .blog-card p { color:var(--text2); font-size:0.85rem; line-height:1.7; }
+  .blog-meta { display:flex; gap:1rem; margin-top:1rem; font-size:0.78rem; color:var(--text2); }
+
+  /* ─── PAGES ─── */
+  .page-section { display:none; }
+  .page-section.active-page { display:block; }
+  .home-page { display:block; }
+  .page-hero {
+    padding: 120px 5% 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-hero h1 { font-size:clamp(2rem,5vw,3.5rem); font-weight:900; margin-bottom:1rem; }
+  .page-hero p { color:var(--text2); max-width:600px; margin:0 auto; line-height:1.8; }
+  .content-block {
+    max-width: 800px; margin: 0 auto; padding: 60px 5%;
+    line-height: 1.9; color: var(--text2);
+  }
+  .content-block h2 { color:var(--text); font-size:1.4rem; font-weight:700; margin:2rem 0 1rem; }
+  .content-block p { margin-bottom:1rem; }
+  .content-block ul { padding-right:1.5rem; margin-bottom:1rem; }
+  .content-block li { margin-bottom:0.5rem; }
+
+  /* ─── CONTACT ─── */
+  .contact-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:3rem;
+    max-width:900px; margin:0 auto; padding:60px 5%;
+    align-items:start;
+  }
+  .contact-info h2 { font-size:1.8rem; font-weight:800; margin-bottom:1rem; }
+  .contact-info p { color:var(--text2); line-height:1.8; margin-bottom:2rem; }
+  .contact-detail {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:1rem; color:var(--text2); font-size:0.95rem;
+  }
+  .contact-detail .ico { font-size:1.2rem; }
+  .contact-form { display:flex; flex-direction:column; gap:1rem; }
+  .contact-form input, .contact-form textarea {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:10px; padding:14px 16px;
+    color:var(--text); font-family:'Cairo',sans-serif; font-size:0.9rem;
+    outline:none; transition:border-color 0.2s;
+    resize:vertical;
+  }
+  .contact-form input:focus, .contact-form textarea:focus { border-color:var(--accent); }
+  .contact-form textarea { min-height:140px; }
+  .form-success {
+    display:none; background:rgba(0,245,160,0.1); border:1px solid rgba(0,245,160,0.3);
+    border-radius:10px; padding:1rem; color:var(--accent); font-weight:600; text-align:center;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top:1px solid var(--border);
+    padding:3rem 5%;
+    background:var(--bg);
+  }
+  .footer-inner {
+    max-width:1200px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.5rem;
+  }
+  .footer-links { display:flex; gap:1.5rem; flex-wrap:wrap; }
+  .footer-links a {
+    color:var(--text2); text-decoration:none; font-size:0.85rem;
+    transition:color 0.2s;
+  }
+  .footer-links a:hover { color:var(--accent); }
+  .footer-copy { color:var(--text2); font-size:0.8rem; text-align:center; }
+  .footer-copy span { color:var(--accent); }
+  .made-by { color:var(--text2); font-size:0.8rem; }
+  .made-by a { color:var(--accent); text-decoration:none; }
+
+  /* ─── BLOG ARTICLE PAGES ─── */
+  .article-content {
+    max-width:780px; margin:0 auto; padding:60px 5%;
+  }
+  .article-content h1 { font-size:clamp(1.6rem,4vw,2.4rem); font-weight:900; margin-bottom:1.5rem; line-height:1.3; }
+  .article-content h2 { font-size:1.3rem; font-weight:700; margin:2rem 0 0.8rem; color:var(--text); }
+  .article-content p { color:var(--text2); line-height:1.9; margin-bottom:1rem; }
+  .article-content ul { color:var(--text2); padding-right:1.5rem; margin-bottom:1rem; }
+  .article-content li { margin-bottom:0.5rem; line-height:1.7; }
+  .article-meta { display:flex; gap:1rem; color:var(--text2); font-size:0.8rem; margin-bottom:2rem; flex-wrap:wrap; align-items:center; }
+  .article-meta .tag { background:rgba(0,245,160,0.1); color:var(--accent); padding:3px 10px; border-radius:6px; font-size:0.75rem; font-weight:700; }
+  .article-tip {
+    background:rgba(0,245,160,0.06); border-right:3px solid var(--accent);
+    padding:1rem 1.5rem; border-radius:0 10px 10px 0; margin:1.5rem 0;
+    color:var(--text); font-size:0.9rem; line-height:1.7;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:4rem;
+    max-width:900px; margin:0 auto; padding:60px 5%; align-items:center;
+  }
+  .about-visual {
+    aspect-ratio:1;
+    background:var(--bg3); border-radius:24px;
+    display:flex; align-items:center; justify-content:center; font-size:6rem;
+    border:1px solid var(--border);
+    position:relative; overflow:hidden;
+  }
+  .about-visual::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at center,rgba(0,245,160,0.1),transparent 70%);
+  }
+  .about-text h2 { font-size:1.8rem; font-weight:900; margin-bottom:1rem; }
+  .about-text p { color:var(--text2); line-height:1.9; margin-bottom:1rem; font-size:0.95rem; }
+  .team-badge {
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:12px; padding:12px 16px; margin-top:1rem;
+  }
+  .team-badge .avatar {
+    width:40px; height:40px; border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:0.9rem; color:var(--bg);
+  }
+  .team-badge .info strong { display:block; font-size:0.9rem; }
+  .team-badge .info span { color:var(--text2); font-size:0.8rem; }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ─── MOBILE ─── */
+  @media(max-width:768px) {
+    .nav-links { display:none; }
+    .nav-links.open { display:flex; flex-direction:column; position:fixed; top:64px; left:0; right:0; background:var(--bg2); padding:2rem; border-bottom:1px solid var(--border); gap:1.2rem; }
+    .hamburger { display:flex; }
+    .controls-grid { grid-template-columns:1fr; }
+    .contact-grid { grid-template-columns:1fr; }
+    .about-grid { grid-template-columns:1fr; }
+    .steps-container::before { display:none; }
+    .hero-stats { gap:1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#" onclick="showPage('home')">Clip<span>Forge</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="showPage('home')">الرئيسية</a></li>
+    <li><a href="#" onclick="showPage('tool')">أداة التحرير</a></li>
+    <li><a href="#" onclick="showPage('blog')">المقالات</a></li>
+    <li><a href="#" onclick="showPage('about')">من نحن</a></li>
+    <li><a href="#" onclick="showPage('contact')">تواصل معنا</a></li>
+    <li><a href="#" class="nav-cta" onclick="showPage('tool')">ابدأ الآن ✦</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ════════════════ HOME PAGE ════════════════ -->
+<div id="page-home" class="home-page">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-bg"></div>
+    <div class="hero-badge">🎬 أداة تحرير فيديو مجانية 100%</div>
+    <h1 class="hero-title">
+      <span class="line1">حوّل فيديوهاتك</span>
+      <span class="line2">لـ TikTok & Reels</span>
+    </h1>
+    <p class="hero-sub">قطّع، حوّل، وأضف نص لفيديوهاتك أونلاين بثوانٍ. بدون تحميل برامج، بدون تسجيل، مجاناً تماماً.</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-primary" onclick="showPage('tool')">🎬 ارفع فيديو الآن</a>
+      <a href="#" class="btn-secondary" onclick="showPage('blog')">📖 اقرأ المقالات</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">9:16</div><div class="stat-label">مقاس TikTok</div></div>
+      <div class="stat"><div class="stat-num">0$</div><div class="stat-label">مجاناً تماماً</div></div>
+      <div class="stat"><div class="stat-num">MP4+</div><div class="stat-label">كل الصيغ</div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">أون لاين</div></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section>
+    <div class="section-label reveal">الخصائص</div>
+    <h2 class="section-title reveal">كل اللي تحتاجه في مكان واحد</h2>
+    <p class="section-sub reveal">أداة تحرير متكاملة مباشرة في المتصفح. لا تثبيت، لا تسجيل.</p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">✂️</div>
+        <h3>تقطيع الفيديو</h3>
+        <p>اختار وقت البداية والنهاية واقطع أي جزء من فيديوهاتك بدقة متناهية.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📱</div>
+        <h3>تحويل لـ TikTok 9:16</h3>
+        <p>حوّل أي فيديو لمقاس TikTok وInstagram Reels العمودي تلقائياً.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">✍️</div>
+        <h3>إضافة نص</h3>
+        <p>أضف عناوين ونصوص مخصصة على فيديوهاتك بخطوط عربية وإنجليزية.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">👁️</div>
+        <h3>معاينة فورية</h3>
+        <p>اشوف الفيديو بعد التعديل قبل ما تحمّله للتأكد إن الشكل بالظبط زي ما تريد.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">⬇️</div>
+        <h3>تحميل مباشر</h3>
+        <p>حمّل الفيديو المعدّل مباشرة لجهازك بصيغة MP4 عالية الجودة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">⚡</div>
+        <h3>سريع جداً</h3>
+        <p>معالجة الفيديو تتم محلياً في المتصفح، خصوصيتك محمية وسرعة فائقة.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section style="background:var(--bg2);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="section-label reveal" style="text-align:center">كيف يشتغل</div>
+      <h2 class="section-title reveal" style="text-align:center">3 خطوات بسيطة</h2>
+      <div class="steps-container">
+        <div class="step reveal">
+          <div class="step-num">01</div>
+          <h3>ارفع الفيديو</h3>
+          <p>اختار الفيديو من جهازك بأي صيغة MP4, MOV, AVI</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">02</div>
+          <h3>عدّل وخصّص</h3>
+          <p>قطّع الوقت، حوّل للمقاس، وأضف النصوص اللي تريدها</p>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">03</div>
+          <h3>حمّل ونشر</h3>
+          <p>اضغط تحميل واحصل على فيديوك جاهز للنشر فوراً</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="text-align:center;">
+    <div class="reveal" style="max-width:600px;margin:0 auto;">
+      <div class="section-label">ابدأ دلوقتي</div>
+      <h2 class="section-title">جاهز تعمل content يجنن؟</h2>
+      <p class="section-sub" style="margin:0 auto 2rem;">مش محتاج تشتري أي برنامج أو تسجّل. ارفع فيديوك وابدأ التحرير الآن.</p>
+      <a href="#" class="btn-primary" onclick="showPage('tool')" style="margin:0 auto;display:inline-flex;">🚀 جرّب مجاناً</a>
+    </div>
+  </section>
+
+</div>
+
+<!-- ════════════════ TOOL PAGE ════════════════ -->
+<div id="page-tool" class="page-section">
+  <div class="page-hero">
+    <h1>✂️ أداة تحرير الفيديو</h1>
+    <p>ارفع فيديوك وقطّعه وحوّله لـ TikTok وReels مباشرة في المتصفح</p>
+  </div>
+  <section class="tool-section">
+    <div class="tool-wrapper">
+
+      <!-- Upload Zone -->
+      <div class="upload-zone reveal" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" accept="video/*" onchange="handleVideoUpload(event)">
+        <div class="upload-icon">🎬</div>
+        <h3>اسحب الفيديو هنا أو اضغط للاختيار</h3>
+        <p>ارفع فيديو من جهازك لتبدأ التحرير</p>
+        <div class="formats">
+          <span class="badge">MP4</span>
+          <span class="badge">MOV</span>
+          <span class="badge">AVI</span>
+          <span class="badge">WebM</span>
+          <span class="badge">MKV</span>
+        </div>
+      </div>
+
+      <!-- Editor Panel -->
+      <div class="editor-panel" id="editorPanel">
+
+        <!-- Video Preview -->
+        <div class="video-preview-wrap">
+          <video id="videoPreview" controls></video>
+        </div>
+
+        <!-- Time Controls -->
+        <div class="controls-grid">
+          <div class="control-group">
+            <label>⏱️ وقت البداية (ثانية)</label>
+            <input type="number" id="startTime" value="0" min="0" step="0.1" placeholder="0">
+          </div>
+          <div class="control-group">
+            <label>⏱️ وقت النهاية (ثانية)</label>
+            <input type="number" id="endTime" value="10" min="0" step="0.1" placeholder="10">
+          </div>
+          <div class="control-group">
+            <label>✍️ النص المضاف (اختياري)</label>
+            <input type="text" id="overlayText" placeholder="مثال: اشترك الآن 🔥">
+          </div>
+          <div class="control-group">
+            <label>📐 موضع النص</label>
+            <select id="textPosition">
+              <option value="bottom">أسفل الفيديو</option>
+              <option value="top">أعلى الفيديو</option>
+              <option value="center">وسط الفيديو</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Format Options -->
+        <div class="options-row">
+          <div class="toggle-card active" id="card-original" onclick="selectFormat('original')">
+            <span class="ico">🖥️</span>
+            <div class="info">
+              <strong>المقاس الأصلي</strong>
+              <span>محافظ على النسبة الأصلية</span>
+            </div>
+          </div>
+          <div class="toggle-card" id="card-vertical" onclick="selectFormat('vertical')">
+            <span class="ico">📱</span>
+            <div class="info">
+              <strong>TikTok / Reels</strong>
+              <span>مقاس 9:16 عمودي</span>
+            </div>
+          </div>
+          <div class="toggle-card" id="card-square" onclick="selectFormat('square')">
+            <span class="ico">⬜</span>
+            <div class="info">
+              <strong>مربع 1:1</strong>
+              <span>مناسب لـ Instagram</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-btns">
+          <button class="btn-tool btn-process" onclick="processVideo()">
+            🎬 معالجة الفيديو
+          </button>
+          <button class="btn-tool btn-download" id="downloadBtn" disabled onclick="downloadVideo()">
+            ⬇️ تحميل الفيديو
+          </button>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-wrap" id="progressWrap">
+          <div class="progress-header">
+            <span class="progress-label" id="progressLabel">جاري المعالجة...</span>
+            <span class="progress-pct" id="progressPct">0%</span>
+          </div>
+          <div class="progress-bar running" id="progressBar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-stage" id="progressStage">بدء المعالجة...</div>
+        </div>
+
+        <!-- Result Video -->
+        <div class="result-video-wrap" id="resultWrap">
+          <p style="color:var(--accent);font-weight:700;margin-bottom:0.8rem;">✅ تم تجهيز الفيديو — شاهد المعاينة:</p>
+          <video id="resultVideo" controls playsinline></video>
+        </div>
+        <canvas id="resultCanvas" style="display:none;"></canvas>
+
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════ BLOG PAGE ════════════════ -->
+<div id="page-blog" class="page-section">
+  <div class="page-hero">
+    <h1>📝 مقالات وتيبس</h1>
+    <p>كل اللي محتاج تعرفه عن تحرير الفيديو لـ TikTok وInstagram Reels</p>
+  </div>
+  <section>
+    <div class="blog-grid">
+      <a href="#" class="blog-card reveal" onclick="showArticle('article1')">
+        <div class="blog-thumb b1">📱</div>
+        <div class="blog-body">
+          <div class="blog-cat">TikTok</div>
+          <h3>How to Convert Video to TikTok Format</h3>
+          <p>كيفية تحويل أي فيديو لمقاس TikTok المناسب خطوة بخطوة</p>
+          <div class="blog-meta"><span>📅 يناير 2025</span><span>⏱️ 5 دقائق</span></div>
+        </div>
+      </a>
+      <a href="#" class="blog-card reveal" onclick="showArticle('article2')">
+        <div class="blog-thumb b2">📐</div>
+        <div class="blog-body">
+          <div class="blog-cat">مقاسات</div>
+          <h3>Best Video Size for TikTok in 2025</h3>
+          <p>دليلك الكامل لأفضل مقاسات وأبعاد الفيديو على TikTok</p>
+          <div class="blog-meta"><span>📅 فبراير 2025</span><span>⏱️ 4 دقائق</span></div>
+        </div>
+      </a>
+      <a href="#" class="blog-card reveal" onclick="showArticle('article3')">
+        <div class="blog-thumb b3">✂️</div>
+        <div class="blog-body">
+          <div class="blog-cat">تحرير</div>
+          <h3>Cut Video Online Free – Complete Guide</h3>
+          <p>كيف تقطع فيديوهاتك مجاناً أونلاين بدون تحميل أي برنامج</p>
+          <div class="blog-meta"><span>📅 مارس 2025</span><span>⏱️ 6 دقائق</span></div>
+        </div>
+      </a>
+      <a href="#" class="blog-card reveal" onclick="showArticle('article4')">
+        <div class="blog-thumb b4">🎬</div>
+        <div class="blog-body">
+          <div class="blog-cat">Reels</div>
+          <h3>How to Edit Videos for Instagram Reels</h3>
+          <p>أسرار تحرير فيديوهات Reels لزيادة المشاهدات والتفاعل</p>
+          <div class="blog-meta"><span>📅 أبريل 2025</span><span>⏱️ 7 دقائق</span></div>
+        </div>
+      </a>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════ ARTICLE PAGES ════════════════ -->
+<div id="page-article1" class="page-section">
+  <div style="padding-top:80px;border-bottom:1px solid var(--border);padding-bottom:20px;">
+    <div class="article-content">
+      <div class="article-meta">
+        <span class="tag">TikTok</span>
+        <span>📅 يناير 2025</span>
+        <span>⏱️ 5 دقائق قراءة</span>
+      </div>
+      <h1>How to Convert Video to TikTok Format – الدليل الكامل</h1>
+    </div>
+  </div>
+  <div class="article-content">
+    <p>تيك توك أصبح من أكبر منصات التواصل الاجتماعي في العالم، وإذا كنت تريد تحقيق أقصى مشاهدات ممكنة، لازم فيديوهاتك تكون بالمقاس الصح والجودة المناسبة.</p>
+    <h2>ليه المقاس مهم جداً؟</h2>
+    <p>TikTok مصمم للموبايل في المقام الأول. الفيديوهات العمودية بنسبة 9:16 تملأ الشاشة كاملة وتعطي تجربة مشاهدة أفضل بكتير من الفيديوهات الأفقية.</p>
+    <div class="article-tip">💡 تيب: الفيديوهات العمودية 9:16 بتحصل على معدل مشاهدة أعلى بـ 60% من الفيديوهات الأفقية على TikTok.</div>
+    <h2>المقاسات الرسمية لـ TikTok</h2>
+    <ul>
+      <li><strong>النسبة المثالية:</strong> 9:16 (عمودي)</li>
+      <li><strong>الحل الأمثل:</strong> 1080 × 1920 بكسل</li>
+      <li><strong>الحد الأدنى:</strong> 720 × 1280 بكسل</li>
+      <li><strong>الحجم الأقصى:</strong> 287.6 MB للـ iOS و72 MB للـ Android</li>
+    </ul>
+    <h2>كيف تحوّل فيديوهاتك باستخدام ClipForge</h2>
+    <p>1. اضغط على "أداة التحرير" من القائمة العلوية.</p>
+    <p>2. ارفع فيديوك من جهازك.</p>
+    <p>3. اختار خيار "TikTok / Reels – مقاس 9:16".</p>
+    <p>4. اضغط "معالجة الفيديو" ثم "تحميل الفيديو".</p>
+    <div class="article-tip">💡 يمكنك إضافة نص مخصص على الفيديو قبل التحميل لجعله أكثر جذباً!</div>
+    <h2>نصائح إضافية</h2>
+    <ul>
+      <li>تأكد من أن الوجه أو المحتوى الرئيسي في منتصف الشاشة قبل التحويل.</li>
+      <li>تجنب وضع نصوص مهمة في الأطراف لأنها قد تُقطع.</li>
+      <li>استخدم ألوان حيوية وإضاءة جيدة لجذب الانتباه خلال أول ثانيتين.</li>
+    </ul>
+    <br>
+    <a href="#" class="btn-primary" onclick="showPage('tool')" style="display:inline-flex;">🎬 جرّب الأداة الآن</a>
+  </div>
+</div>
+
+<div id="page-article2" class="page-section">
+  <div style="padding-top:80px;border-bottom:1px solid var(--border);padding-bottom:20px;">
+    <div class="article-content">
+      <div class="article-meta">
+        <span class="tag">مقاسات</span>
+        <span>📅 فبراير 2025</span>
+        <span>⏱️ 4 دقائق قراءة</span>
+      </div>
+      <h1>Best Video Size for TikTok in 2025 – أفضل مقاسات الفيديو</h1>
+    </div>
+  </div>
+  <div class="article-content">
+    <p>اختيار المقاس الصح لفيديوهات TikTok هو أول خطوة نحو content احترافي يوصل لأكبر عدد من المشاهدين.</p>
+    <h2>جدول المقاسات المثالية</h2>
+    <ul>
+      <li><strong>9:16 (مُوصَى به):</strong> 1080×1920 – مثالي للموبايل</li>
+      <li><strong>1:1 (مربع):</strong> 1080×1080 – مناسب لـ Instagram أيضاً</li>
+      <li><strong>16:9 (أفقي):</strong> 1920×1080 – للمحتوى على Desktop</li>
+    </ul>
+    <div class="article-tip">💡 في 2025، TikTok أطلق ميزة "TikTok for Desktop" وبدأت الفيديوهات الأفقية تأخذ حضوراً أكبر، لكن العمودي لا يزال الملك!</div>
+    <h2>معدل الإطارات (FPS)</h2>
+    <ul>
+      <li>الحد الأدنى: 23 FPS</li>
+      <li>المُوصَى به: 30 FPS</li>
+      <li>الممتاز: 60 FPS للمحتوى الرياضي والسريع</li>
+    </ul>
+    <h2>الجودة والضغط</h2>
+    <p>TikTok يضغط الفيديوهات تلقائياً عند الرفع. لتحصل على أفضل جودة بعد الضغط، ارفع الفيديو بأعلى جودة ممكنة (H.264 أو H.265) لأن المنصة ستضغطه لكن ستحتفظ بأفضل جودة من النسخة الأصلية.</p>
+    <br>
+    <a href="#" class="btn-primary" onclick="showPage('tool')" style="display:inline-flex;">📐 حوّل فيديوك الآن</a>
+  </div>
+</div>
+
+<div id="page-article3" class="page-section">
+  <div style="padding-top:80px;border-bottom:1px solid var(--border);padding-bottom:20px;">
+    <div class="article-content">
+      <div class="article-meta">
+        <span class="tag">تحرير مجاني</span>
+        <span>📅 مارس 2025</span>
+        <span>⏱️ 6 دقائق قراءة</span>
+      </div>
+      <h1>Cut Video Online Free – كيف تقطع فيديوهاتك مجاناً أونلاين</h1>
+    </div>
+  </div>
+  <div class="article-content">
+    <p>مش محتاج تشتري Adobe Premiere أو تحمّل برامج ضخمة. في 2025، تقطيع الفيديوهات أون لاين أصبح أسرع وأسهل من أي وقت مضى.</p>
+    <h2>ليه تقطع فيديوهاتك؟</h2>
+    <ul>
+      <li>حذف المقدمات والمؤخرات غير الضرورية</li>
+      <li>استخراج أفضل لحظة من فيديو طويل</li>
+      <li>تقليل حجم الفيديو للمشاركة</li>
+      <li>إنشاء كليبات قصيرة من مقاطع طويلة</li>
+    </ul>
+    <div class="article-tip">💡 الفيديوهات القصيرة (15-60 ثانية) على TikTok وReels تحصل على معدل إكمال مشاهدة أعلى بكثير.</div>
+    <h2>كيف تقطع فيديو باستخدام ClipForge</h2>
+    <p>1. اذهب لـ "أداة التحرير" وارفع فيديوك.</p>
+    <p>2. شغّل الفيديو وحدّد وقت البداية الذي تريده.</p>
+    <p>3. أدخل وقت البداية في حقل "وقت البداية (ثانية)".</p>
+    <p>4. أدخل وقت النهاية في حقل "وقت النهاية (ثانية)".</p>
+    <p>5. اضغط "معالجة الفيديو" ثم "تحميل الفيديو".</p>
+    <h2>نصائح للقطع الاحترافي</h2>
+    <ul>
+      <li>ابدأ بأقوى لحظة في الفيديو لتشدّ المشاهد من الثانية الأولى</li>
+      <li>انهِ الفيديو بـ call-to-action واضح (اشترك، شارك، علّق)</li>
+      <li>احذف أي صمت أو تردد في البداية</li>
+    </ul>
+    <br>
+    <a href="#" class="btn-primary" onclick="showPage('tool')" style="display:inline-flex;">✂️ اقطع فيديوك الآن</a>
+  </div>
+</div>
+
+<div id="page-article4" class="page-section">
+  <div style="padding-top:80px;border-bottom:1px solid var(--border);padding-bottom:20px;">
+    <div class="article-content">
+      <div class="article-meta">
+        <span class="tag">Instagram Reels</span>
+        <span>📅 أبريل 2025</span>
+        <span>⏱️ 7 دقائق قراءة</span>
+      </div>
+      <h1>How to Edit Videos for Instagram Reels – الدليل الاحترافي</h1>
+    </div>
+  </div>
+  <div class="article-content">
+    <p>Instagram Reels أداة قوية جداً للوصول لجمهور جديد. مع التحرير الصح، ممكن فيديوهاتك توصل لملايين المشاهدين حتى لو حسابك صغير.</p>
+    <h2>مواصفات Reels المثالية</h2>
+    <ul>
+      <li><strong>النسبة:</strong> 9:16 (مطلوب)</li>
+      <li><strong>الدقة:</strong> 1080×1920 بكسل</li>
+      <li><strong>المدة:</strong> 15 ثانية إلى 90 ثانية</li>
+      <li><strong>الصيغة:</strong> MP4 مُوصَى به</li>
+    </ul>
+    <div class="article-tip">💡 Reels التي تتراوح بين 15-30 ثانية تحقق أعلى معدلات إكمال، وهذا يُرسل إشارة إيجابية للخوارزمية.</div>
+    <h2>عناصر الـ Reel الناجح</h2>
+    <ul>
+      <li><strong>Hook قوي:</strong> أول ثانيتين تقرران إذا كان المشاهد سيكمل أم لا</li>
+      <li><strong>موسيقى رائجة:</strong> استخدم أغاني Trending لتظهر في صفحة الاستكشاف</li>
+      <li><strong>نص واضح:</strong> كثير من المشاهدين يشوفون بدون صوت</li>
+      <li><strong>نهاية قوية:</strong> اختم بـ call-to-action</li>
+    </ul>
+    <h2>تحرير Reels مع ClipForge</h2>
+    <p>ClipForge يوفر لك تحويل الفيديو لنسبة 9:16 وإضافة نصوص ومقاطعة الفيديو بالضبط على المدة المطلوبة، كل ده مجاناً وأون لاين.</p>
+    <br>
+    <a href="#" class="btn-primary" onclick="showPage('tool')" style="display:inline-flex;">🎬 اعمل Reel احترافي</a>
+  </div>
+</div>
+
+<!-- ════════════════ ABOUT PAGE ════════════════ -->
+<div id="page-about" class="page-section">
+  <div class="page-hero">
+    <h1>👋 من نحن</h1>
+    <p>قصة ClipForge وهدفها في جعل تحرير الفيديو متاحاً للجميع</p>
+  </div>
+  <div class="about-grid">
+    <div class="about-visual reveal">🎬</div>
+    <div class="about-text reveal">
+      <h2>ClipForge – أداتك لإنشاء المحتوى</h2>
+      <p>ClipForge أداة تحرير فيديو مجانية وأونلاين، تهدف لجعل إنشاء محتوى TikTok وInstagram Reels سهلاً ومتاحاً للجميع بدون تعقيد أو تكلفة.</p>
+      <p>نؤمن أن الإبداع لا يحتاج برامج باهظة الثمن. كل ما تحتاجه هو متصفح وفيديو، وClipForge يعمل معك على الباقي.</p>
+      <p>الموقع مصمم بتركيز كامل على السرعة والبساطة – لأن وقتك ثمين ومحتواك يستحق أن يُنشر فوراً.</p>
+      <div class="team-badge">
+        <div class="avatar">عA</div>
+        <div class="info">
+          <strong>Eng AbdElrahman Ahmed</strong>
+          <span>مؤسس ومطور ClipForge</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ PRIVACY POLICY ════════════════ -->
+<div id="page-privacy" class="page-section">
+  <div class="page-hero">
+    <h1>🔒 سياسة الخصوصية</h1>
+    <p>نحن نحترم خصوصيتك ونأخذها بجدية تامة</p>
+  </div>
+  <div class="content-block">
+    <h2>1. البيانات التي نجمعها</h2>
+    <p>ClipForge يعمل بشكل كامل في متصفحك. الفيديوهات التي ترفعها <strong>لا تُرسَل لأي خادم خارجي</strong> ولا نحتفظ بأي نسخ منها.</p>
+    <h2>2. ملفات الكوكيز</h2>
+    <p>نستخدم ملفات كوكيز بسيطة فقط لتحسين تجربتك على الموقع وتذكر تفضيلاتك. لا نستخدم كوكيز تتبع أو إعلانات.</p>
+    <h2>3. نماذج التواصل</h2>
+    <p>عند إرسال رسالة عبر نموذج التواصل، نستخدم بياناتك (الاسم والبريد الإلكتروني والرسالة) فقط للرد عليك ولا نشاركها مع أطراف أخرى.</p>
+    <h2>4. الأمان</h2>
+    <p>جميع بيانات الاتصال بالموقع مشفرة عبر HTTPS. نحن ملتزمون بحماية أي بيانات تشاركها معنا.</p>
+    <h2>5. حقوقك</h2>
+    <ul>
+      <li>حق الوصول لبياناتك الشخصية</li>
+      <li>حق طلب حذف بياناتك</li>
+      <li>حق تصحيح بياناتك</li>
+    </ul>
+    <h2>6. التواصل</h2>
+    <p>لأي استفسارات تتعلق بالخصوصية، تواصل معنا على: <a href="/cdn-cgi/l/email-protection#e48586808b858c8981808996d5a48389858d88ca878b89" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="fc9d9e98939d94919998918ecdbc9b919d9590d29f9391">Email : abdoahmedmr1@gmail.com</span></a></p>
+    <p style="color:var(--text2);font-size:0.85rem;margin-top:2rem;">آخر تحديث: أبريل 2025</p>
+  </div>
+</div>
+
+<!-- ════════════════ CONTACT PAGE ════════════════ -->
+<div id="page-contact" class="page-section">
+  <div class="page-hero">
+    <h1>📬 تواصل معنا</h1>
+    <p>عندك سؤال أو اقتراح أو مشكلة؟ يسعدنا نساعدك</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info reveal">
+      <h2>نحب نسمع منك</h2>
+      <p>سواء كان عندك سؤال عن الأداة، اقتراح لميزة جديدة، أو أي ملاحظة – فريقنا جاهز يرد عليك في أقرب وقت.</p>
+      <div class="contact-detail">
+        <span class="ico">📧</span>
+        <a href="/cdn-cgi/l/email-protection#80e1e2e4efe1e8ede5e4edf2b1c0e7ede1e9ecaee3efed" style="color:var(--accent);text-decoration:none"><span class="__cf_email__" data-cfemail="badbd8ded5dbd2d7dfded7c88bfaddd7dbd3d694d9d5d7">Email : abdoahmedmr1@gmail.com</span></a>
+      </div>
+      <div class="contact-detail">
+        <span class="ico">⏱️</span>
+        <span>الرد خلال 24 ساعة</span>
+      </div>
+      <div class="contact-detail">
+        <span class="ico">🌍</span>
+        <span>نخدم مستخدمين من كل العالم العربي</span>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="contact-form" id="contactForm">
+        <input type="text" id="contactName" placeholder="اسمك الكريم" required>
+        <input type="email" id="contactEmail" placeholder="بريدك الإلكتروني" required>
+        <input type="text" id="contactSubject" placeholder="موضوع الرسالة">
+        <textarea id="contactMessage" placeholder="اكتب رسالتك هنا..." required></textarea>
+        <button class="btn-primary" onclick="sendContactForm()" style="border:none;cursor:pointer;justify-content:center;">
+          📨 إرسال الرسالة
+        </button>
+      </div>
+      <div class="form-success" id="formSuccess">
+        ✅ تم إرسال رسالتك بنجاح! سنرد عليك قريباً على بريدك الإلكتروني.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <a class="logo" href="#" onclick="showPage('home')">Clip<span>Forge</span></a>
+      <p class="made-by" style="margin-top:6px">صنع بـ ❤️ بواسطة <a href="/cdn-cgi/l/email-protection#29484b4d464841444c4d445b18694e44484045074a4644">Eng AbdElrahman Ahmed</a></p>
+    </div>
+    <nav class="footer-links">
+      <a href="#" onclick="showPage('home')">الرئيسية</a>
+      <a href="#" onclick="showPage('tool')">الأداة</a>
+      <a href="#" onclick="showPage('blog')">المقالات</a>
+      <a href="#" onclick="showPage('about')">من نحن</a>
+      <a href="#" onclick="showPage('contact')">تواصل</a>
+      <a href="#" onclick="showPage('privacy')">سياسة الخصوصية</a>
+    </nav>
+    <p class="footer-copy">© 2025 <span>ClipForge</span>. جميع الحقوق محفوظة.</p>
+  </div>
+</footer>
+
+<script>
+// ─── NAVIGATION ───
+var currentPage = 'home';
+var allPages = ['home','tool','blog','about','contact','privacy','article1','article2','article3','article4'];
+
+window.showPage = function(page) {
+  allPages.forEach(function(p) {
+    var el = document.getElementById('page-' + p);
+    if (el) { el.style.display = 'none'; el.classList.remove('active-page'); }
+  });
+  var target = document.getElementById('page-' + page);
+  if (target) { target.style.display = 'block'; target.classList.add('active-page'); }
+  currentPage = page;
+  window.scrollTo({top:0, behavior:'smooth'});
+  initReveal();
+  closeMenu();
+};
+
+window.showArticle = function(id) { window.showPage(id); };
+
+window.toggleMenu = function() {
+  document.getElementById('navLinks').classList.toggle('open');
+};
+window.closeMenu = function() {
+  document.getElementById('navLinks').classList.remove('open');
+};
+
+// ─── SCROLL REVEAL ───
+function initReveal() {
+  setTimeout(function() {
+    var els = document.querySelectorAll('.reveal');
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    els.forEach(function(el) { obs.observe(el); });
+  }, 100);
+}
+
+// ─── STATE ───
+var videoFile = null;
+var selectedFormat = 'original';
+var processedBlob = null;
+var isProcessing = false;
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('page-home').style.display = 'block';
+  initReveal();
+
+  var zone = document.getElementById('uploadZone');
+  if (zone) {
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      var f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('video/')) {
+        window.handleVideoUpload({ target: { files: [f] } });
+      }
+    });
+  }
+  initReveal();
+});
+
+// ─── VIDEO UPLOAD ───
+window.handleVideoUpload = function(e) {
+  videoFile = e.target.files[0];
+  if (!videoFile) return;
+  var url = URL.createObjectURL(videoFile);
+  var vid = document.getElementById('videoPreview');
+  vid.src = url;
+  vid.onloadedmetadata = function() {
+    document.getElementById('endTime').value = Math.min(vid.duration, 60).toFixed(1);
+  };
+  document.getElementById('editorPanel').classList.add('visible');
+  document.getElementById('uploadZone').style.display = 'none';
+};
+
+window.selectFormat = function(fmt) {
+  selectedFormat = fmt;
+  ['original','vertical','square'].forEach(function(f) {
+    document.getElementById('card-' + f).classList.toggle('active', f === fmt);
+  });
+};
+
+// ─── PROGRESS ───
+function setProgress(pct, label, stage) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = Math.round(pct) + '%';
+  if (label) document.getElementById('progressLabel').textContent = label;
+  if (stage) document.getElementById('progressStage').textContent = stage;
+}
+
+// ─── REAL VIDEO PROCESSING via MediaRecorder + Canvas ───
+window.processVideo = async function() {
+  if (!videoFile || isProcessing) return;
+
+  var startTime   = parseFloat(document.getElementById('startTime').value) || 0;
+  var endTime     = parseFloat(document.getElementById('endTime').value)   || 10;
+  var overlayText = document.getElementById('overlayText').value.trim();
+  var textPos     = document.getElementById('textPosition').value;
+  var vid         = document.getElementById('videoPreview');
+
+  if (endTime <= startTime) { alert('وقت النهاية لازم يكون أكبر من وقت البداية!'); return; }
+  var duration = endTime - startTime;
+
+  isProcessing = true;
+  processedBlob = null;
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('progressBar').classList.add('running');
+  document.getElementById('resultWrap').style.display = 'none';
+  document.getElementById('downloadBtn').disabled = true;
+
+  setProgress(5, 'تحضير الفيديو...', 'جاري تحليل ملف الفيديو...');
+
+  await seekTo(vid, startTime);
+  setProgress(10, 'إعداد Canvas...', 'ضبط أبعاد الإطار...');
+
+  var vw = vid.videoWidth  || 640;
+  var vh = vid.videoHeight || 360;
+  var cw, ch;
+  if (selectedFormat === 'vertical')    { cw = 608;  ch = 1080; }
+  else if (selectedFormat === 'square') { cw = 720;  ch = 720;  }
+  else                                  { cw = vw;   ch = vh;   }
+  cw = cw % 2 === 0 ? cw : cw - 1;
+  ch = ch % 2 === 0 ? ch : ch - 1;
+
+  var canvas = document.getElementById('resultCanvas');
+  canvas.width = cw; canvas.height = ch;
+  var ctx = canvas.getContext('2d');
+
+  var mimeTypes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
+  var mime = mimeTypes.find(function(m) { return MediaRecorder.isTypeSupported(m); }) || 'video/webm';
+
+  setProgress(15, 'بدء التسجيل...', 'صيغة الترميز: ' + mime);
+
+  var stream   = canvas.captureStream(30);
+  var recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4000000 });
+  var chunks   = [];
+
+  recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+
+  recorder.onstop = function() {
+    processedBlob = new Blob(chunks, { type: mime });
+    var url = URL.createObjectURL(processedBlob);
+    var rv  = document.getElementById('resultVideo');
+    rv.src  = url;
+    document.getElementById('resultWrap').style.display = 'block';
+    document.getElementById('downloadBtn').disabled = false;
+    document.getElementById('progressBar').classList.remove('running');
+    setProgress(100, '✅ اكتملت المعالجة!', 'تم تجهيز ' + duration.toFixed(1) + ' ثانية من الفيديو بنجاح');
+    isProcessing = false;
+    setTimeout(function() { document.getElementById('progressWrap').style.display = 'none'; }, 3500);
+  };
+
+  recorder.start(100);
+
+  var fps         = 30;
+  var totalFrames = Math.ceil(duration * fps);
+  var frame       = 0;
+
+  vid.playbackRate = 1;
+  vid.muted = true;
+  vid.play().catch(function() {});
+
+  function renderLoop() {
+    if (!isProcessing) { try { recorder.stop(); } catch(e) {} return; }
+    var elapsed = frame / fps;
+    if (elapsed > duration) {
+      vid.pause();
+      if (recorder.state === 'recording') recorder.stop();
+      return;
+    }
+    drawFrame(ctx, vid, cw, ch, vw, vh, overlayText, textPos);
+    frame++;
+    var pct = 15 + (frame / totalFrames) * 80;
+    setProgress(
+      Math.min(pct, 95),
+      'معالجة الفيديو... ' + frame + ' / ' + totalFrames + ' إطار',
+      'الوقت: ' + (startTime + elapsed).toFixed(1) + 's — ' + Math.round(pct) + '%'
+    );
+    requestAnimationFrame(renderLoop);
+  }
+  requestAnimationFrame(renderLoop);
+
+  setTimeout(function() {
+    if (isProcessing) { vid.pause(); if (recorder.state === 'recording') recorder.stop(); }
+  }, (duration * 1000) + 800);
+};
+
+function drawFrame(ctx, vid, cw, ch, vw, vh, overlayText, textPos) {
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, cw, ch);
+  var vr = vw / vh, cr = cw / ch;
+  var dx, dy, dw, dh;
+  if (vr > cr) { dh = ch; dw = dh * vr; dx = (cw - dw) / 2; dy = 0; }
+  else         { dw = cw; dh = dw / vr; dy = (ch - dh) / 2; dx = 0; }
+  ctx.drawImage(vid, dx, dy, dw, dh);
+  if (overlayText) {
+    var fontSize = Math.max(cw * 0.045, 20);
+    ctx.font = 'bold ' + fontSize + 'px Cairo, sans-serif';
+    ctx.textAlign = 'center';
+    var tw = ctx.measureText(overlayText).width;
+    var pad = fontSize * 0.5;
+    var ty;
+    if (textPos === 'top')         ty = fontSize * 2.2;
+    else if (textPos === 'center') ty = ch / 2 + fontSize * 0.3;
+    else                           ty = ch - fontSize * 1.8;
+    ctx.fillStyle = 'rgba(0,0,0,0.65)';
+    ctx.beginPath();
+    var rx = cw/2 - tw/2 - pad, ry = ty - fontSize, rw = tw + pad*2, rh = fontSize * 1.5;
+    if (ctx.roundRect) ctx.roundRect(rx, ry, rw, rh, 8); else ctx.rect(rx, ry, rw, rh);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(overlayText, cw/2, ty);
+  }
+}
+
+function seekTo(vid, t) {
+  return new Promise(function(resolve) {
+    if (Math.abs(vid.currentTime - t) < 0.1) { resolve(); return; }
+    vid.currentTime = t;
+    vid.onseeked = function() { vid.onseeked = null; resolve(); };
+  });
+}
+
+window.downloadVideo = function() {
+  if (!processedBlob) return;
+  var ext = processedBlob.type.includes('mp4') ? 'mp4' : 'webm';
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(processedBlob);
+  a.download = 'clipforge-' + Date.now() + '.' + ext;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+// ─── CONTACT FORM ───
+window.sendContactForm = function() {
+  var name    = document.getElementById('contactName').value.trim();
+  var email   = document.getElementById('contactEmail').value.trim();
+  var subject = document.getElementById('contactSubject').value.trim();
+  var message = document.getElementById('contactMessage').value.trim();
+  if (!name || !email || !message) {
+    alert('من فضلك أدخل اسمك وبريدك الإلكتروني ورسالتك');
+    return;
+  }
+  var mailtoLink = 'mailto:abdoahmedmr1@gmail.com?subject=' +
+    encodeURIComponent((subject || 'رسالة من ClipForge') + ' - من: ' + name) +
+    '&body=' + encodeURIComponent('الاسم: ' + name + '\nالبريد: ' + email + '\n\n' + message);
+  window.location.href = mailtoLink;
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('formSuccess').style.display = 'block';
+};
+</script>
+</body>
+</html>
