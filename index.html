@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="icon" href="photo_2026-04-13_19-40-39.png">
 <link rel="apple-touch-icon" href="photo_2026-04-13_19-40-39.png">
+
 <style>
   :root {
     --bg: #0a0a0f;
@@ -371,6 +372,64 @@
   .result-video-wrap { display:none; margin-top:1rem; }
   #resultVideo { max-width:100%; border-radius:12px; background:#000; width:100%; }
 
+  /* MODE TABS */
+  .mode-tabs { display:flex; gap:0; margin-bottom:1.5rem; background:var(--bg3); border-radius:10px; padding:4px; }
+  .mode-tab {
+    flex:1; padding:10px; border:none; border-radius:8px; cursor:pointer;
+    font-family:'Cairo',sans-serif; font-size:0.9rem; font-weight:700;
+    background:transparent; color:var(--text2); transition:all 0.2s;
+  }
+  .mode-tab.active { background:var(--accent); color:var(--bg); }
+
+  /* AUTO SPLIT */
+  .auto-split-box {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:14px; padding:1.5rem; margin-bottom:1rem;
+  }
+  .auto-split-header {
+    display:flex; align-items:flex-start; gap:12px; margin-bottom:0.5rem;
+  }
+  .auto-split-header .ico { font-size:1.8rem; }
+  .auto-split-header strong { display:block; font-size:1rem; font-weight:700; margin-bottom:3px; }
+  .auto-split-header span { font-size:0.82rem; color:var(--text2); }
+  .split-preview {
+    display:flex; flex-wrap:wrap; gap:6px; margin-top:1rem;
+  }
+  .split-badge {
+    background:rgba(0,245,160,0.1); border:1px solid rgba(0,245,160,0.25);
+    color:var(--accent); font-size:0.75rem; font-weight:700;
+    padding:4px 10px; border-radius:6px; font-family:'Space Mono',monospace;
+  }
+
+  /* CLIPS GALLERY */
+  .clips-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1.2rem;
+  }
+  .clip-card {
+    background:var(--bg3); border:1px solid var(--border);
+    border-radius:14px; overflow:hidden;
+    transition:border-color 0.2s, transform 0.2s;
+  }
+  .clip-card:hover { border-color:rgba(0,245,160,0.3); transform:translateY(-2px); }
+  .clip-card video { width:100%; display:block; background:#000; max-height:200px; }
+  .clip-card-body { padding:12px; }
+  .clip-title { font-size:0.85rem; font-weight:700; margin-bottom:4px; }
+  .clip-meta { font-size:0.75rem; color:var(--text2); margin-bottom:10px; }
+  .clip-status {
+    font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:5px;
+    display:inline-block; margin-bottom:8px;
+  }
+  .clip-status.processing { background:rgba(0,212,245,0.1); color:var(--accent2); }
+  .clip-status.done { background:rgba(0,245,160,0.1); color:var(--accent); }
+  .clip-status.queued { background:rgba(144,144,170,0.1); color:var(--text2); }
+  .btn-clip-dl {
+    width:100%; padding:8px; border:none; border-radius:8px;
+    background:var(--accent); color:var(--bg);
+    font-family:'Cairo',sans-serif; font-weight:700; font-size:0.85rem;
+    cursor:pointer; transition:opacity 0.2s;
+  }
+  .btn-clip-dl:disabled { opacity:0.35; cursor:not-allowed; }
+
   /* ─── BLOG ─── */
   .blog-grid {
     display: grid;
@@ -693,63 +752,96 @@
           <video id="videoPreview" controls></video>
         </div>
 
-        <!-- Time Controls -->
-        <div class="controls-grid">
-          <div class="control-group">
-            <label>⏱️ وقت البداية (ثانية)</label>
-            <input type="number" id="startTime" value="0" min="0" step="0.1" placeholder="0">
+        <!-- MODE TABS -->
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="tab-manual" onclick="switchMode('manual')">✂️ قطع يدوي</button>
+          <button class="mode-tab" id="tab-auto" onclick="switchMode('auto')">⚡ تقسيم تلقائي</button>
+        </div>
+
+        <!-- MANUAL MODE -->
+        <div id="mode-manual">
+          <div class="controls-grid">
+            <div class="control-group">
+              <label>⏱️ وقت البداية (ثانية)</label>
+              <input type="number" id="startTime" value="0" min="0" step="0.1" placeholder="0">
+            </div>
+            <div class="control-group">
+              <label>⏱️ وقت النهاية (ثانية)</label>
+              <input type="number" id="endTime" value="10" min="0" step="0.1" placeholder="10">
+            </div>
+            <div class="control-group">
+              <label>✍️ النص المضاف (اختياري)</label>
+              <input type="text" id="overlayText" placeholder="مثال: اشترك الآن 🔥">
+            </div>
+            <div class="control-group">
+              <label>📐 موضع النص</label>
+              <select id="textPosition">
+                <option value="bottom">أسفل الفيديو</option>
+                <option value="top">أعلى الفيديو</option>
+                <option value="center">وسط الفيديو</option>
+              </select>
+            </div>
           </div>
-          <div class="control-group">
-            <label>⏱️ وقت النهاية (ثانية)</label>
-            <input type="number" id="endTime" value="10" min="0" step="0.1" placeholder="10">
+          <!-- Format Options -->
+          <div class="options-row">
+            <div class="toggle-card active" id="card-original" onclick="selectFormat('original')">
+              <span class="ico">🖥️</span>
+              <div class="info"><strong>المقاس الأصلي</strong><span>محافظ على النسبة</span></div>
+            </div>
+            <div class="toggle-card" id="card-vertical" onclick="selectFormat('vertical')">
+              <span class="ico">📱</span>
+              <div class="info"><strong>TikTok / Reels</strong><span>مقاس 9:16 عمودي</span></div>
+            </div>
+            <div class="toggle-card" id="card-square" onclick="selectFormat('square')">
+              <span class="ico">⬜</span>
+              <div class="info"><strong>مربع 1:1</strong><span>مناسب لـ Instagram</span></div>
+            </div>
           </div>
-          <div class="control-group">
-            <label>✍️ النص المضاف (اختياري)</label>
-            <input type="text" id="overlayText" placeholder="مثال: اشترك الآن 🔥">
-          </div>
-          <div class="control-group">
-            <label>📐 موضع النص</label>
-            <select id="textPosition">
-              <option value="bottom">أسفل الفيديو</option>
-              <option value="top">أعلى الفيديو</option>
-              <option value="center">وسط الفيديو</option>
-            </select>
+          <div class="action-btns">
+            <button class="btn-tool btn-process" onclick="processVideo()">🎬 معالجة الفيديو</button>
+            <button class="btn-tool btn-download" id="downloadBtn" disabled onclick="downloadVideo()">⬇️ تحميل الفيديو</button>
           </div>
         </div>
 
-        <!-- Format Options -->
-        <div class="options-row">
-          <div class="toggle-card active" id="card-original" onclick="selectFormat('original')">
-            <span class="ico">🖥️</span>
-            <div class="info">
-              <strong>المقاس الأصلي</strong>
-              <span>محافظ على النسبة الأصلية</span>
+        <!-- AUTO SPLIT MODE -->
+        <div id="mode-auto" style="display:none;">
+          <div class="auto-split-box">
+            <div class="auto-split-header">
+              <span class="ico">⚡</span>
+              <div>
+                <strong>تقسيم تلقائي للفيديو</strong>
+                <span>حدد مدة كل كليب والموقع يقسم الفيديو كله تلقائياً</span>
+              </div>
             </div>
-          </div>
-          <div class="toggle-card" id="card-vertical" onclick="selectFormat('vertical')">
-            <span class="ico">📱</span>
-            <div class="info">
-              <strong>TikTok / Reels</strong>
-              <span>مقاس 9:16 عمودي</span>
+            <div class="controls-grid" style="margin-top:1.2rem;">
+              <div class="control-group">
+                <label>⏱️ مدة كل كليب (ثانية)</label>
+                <input type="number" id="clipDuration" value="30" min="5" max="300" step="5">
+              </div>
+              <div class="control-group">
+                <label>📐 مقاس الكليبات</label>
+                <select id="autoFormat">
+                  <option value="original">المقاس الأصلي</option>
+                  <option value="vertical">TikTok 9:16</option>
+                  <option value="square">مربع 1:1</option>
+                </select>
+              </div>
+              <div class="control-group">
+                <label>✍️ نص على كل الكليبات (اختياري)</label>
+                <input type="text" id="autoOverlayText" placeholder="مثال: الجزء رقم {n}">
+              </div>
+              <div class="control-group">
+                <label>📐 موضع النص</label>
+                <select id="autoTextPosition">
+                  <option value="bottom">أسفل الفيديو</option>
+                  <option value="top">أعلى الفيديو</option>
+                  <option value="center">وسط الفيديو</option>
+                </select>
+              </div>
             </div>
+            <div id="autoSplitPreview" class="split-preview"></div>
+            <button class="btn-tool btn-process" style="width:100%;margin-top:1rem;" onclick="startAutoSplit()">⚡ ابدأ التقسيم التلقائي</button>
           </div>
-          <div class="toggle-card" id="card-square" onclick="selectFormat('square')">
-            <span class="ico">⬜</span>
-            <div class="info">
-              <strong>مربع 1:1</strong>
-              <span>مناسب لـ Instagram</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="action-btns">
-          <button class="btn-tool btn-process" onclick="processVideo()">
-            🎬 معالجة الفيديو
-          </button>
-          <button class="btn-tool btn-download" id="downloadBtn" disabled onclick="downloadVideo()">
-            ⬇️ تحميل الفيديو
-          </button>
         </div>
 
         <!-- Progress -->
@@ -764,13 +856,22 @@
           <div class="progress-stage" id="progressStage">بدء المعالجة...</div>
         </div>
 
-        <!-- Result Video -->
+        <!-- Single Result Video -->
         <div class="result-video-wrap" id="resultWrap">
           <p style="color:var(--accent);font-weight:700;margin-bottom:0.8rem;">✅ تم تجهيز الفيديو — شاهد المعاينة:</p>
           <video id="resultVideo" controls playsinline></video>
         </div>
-        <canvas id="resultCanvas" style="display:none;"></canvas>
 
+        <!-- Auto Split Clips Gallery -->
+        <div id="clipsGallery" style="display:none;margin-top:2rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:1rem;">
+            <h3 style="font-size:1.1rem;font-weight:700;color:var(--accent);">🎬 الكليبات الجاهزة</h3>
+            <button class="btn-primary" onclick="downloadAllClips()" style="font-size:0.85rem;padding:8px 16px;border:none;">⬇️ تحميل الكل</button>
+          </div>
+          <div id="clipsGrid" class="clips-grid"></div>
+        </div>
+
+        <canvas id="resultCanvas" style="display:none;"></canvas>
       </div>
     </div>
   </section>
@@ -987,7 +1088,7 @@
       <div class="team-badge">
         <div class="avatar">عA</div>
         <div class="info">
-          <strong>Eng AbdElrahman Ahmed</strong>
+          <strong>عبده أحمد</strong>
           <span>مؤسس ومطور ClipForge</span>
         </div>
       </div>
@@ -1017,7 +1118,7 @@
       <li>حق تصحيح بياناتك</li>
     </ul>
     <h2>6. التواصل</h2>
-    <p>لأي استفسارات تتعلق بالخصوصية، تواصل معنا على: <a href="/cdn-cgi/l/email-protection#e48586808b858c8981808996d5a48389858d88ca878b89" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="fc9d9e98939d94919998918ecdbc9b919d9590d29f9391">Email : abdoahmedmr1@gmail.com</span></a></p>
+    <p>لأي استفسارات تتعلق بالخصوصية، تواصل معنا على: <a href="/cdn-cgi/l/email-protection#e48586808b858c8981808996d5a48389858d88ca878b89" style="color:var(--accent)"><span class="__cf_email__" data-cfemail="fc9d9e98939d94919998918ecdbc9b919d9590d29f9391">[email&#160;protected]</span></a></p>
     <p style="color:var(--text2);font-size:0.85rem;margin-top:2rem;">آخر تحديث: أبريل 2025</p>
   </div>
 </div>
@@ -1034,7 +1135,7 @@
       <p>سواء كان عندك سؤال عن الأداة، اقتراح لميزة جديدة، أو أي ملاحظة – فريقنا جاهز يرد عليك في أقرب وقت.</p>
       <div class="contact-detail">
         <span class="ico">📧</span>
-        <a href="/cdn-cgi/l/email-protection#80e1e2e4efe1e8ede5e4edf2b1c0e7ede1e9ecaee3efed" style="color:var(--accent);text-decoration:none"><span class="__cf_email__" data-cfemail="badbd8ded5dbd2d7dfded7c88bfaddd7dbd3d694d9d5d7">Email : abdoahmedmr1@gmail.com</span></a>
+        <a href="/cdn-cgi/l/email-protection#80e1e2e4efe1e8ede5e4edf2b1c0e7ede1e9ecaee3efed" style="color:var(--accent);text-decoration:none"><span class="__cf_email__" data-cfemail="badbd8ded5dbd2d7dfded7c88bfaddd7dbd3d694d9d5d7">[email&#160;protected]</span></a>
       </div>
       <div class="contact-detail">
         <span class="ico">⏱️</span>
@@ -1067,7 +1168,7 @@
   <div class="footer-inner">
     <div>
       <a class="logo" href="#" onclick="showPage('home')">Clip<span>Forge</span></a>
-      <p class="made-by" style="margin-top:6px">صنع بـ ❤️ بواسطة <a href="/cdn-cgi/l/email-protection#29484b4d464841444c4d445b18694e44484045074a4644">Eng AbdElrahman Ahmed</a></p>
+      <p class="made-by" style="margin-top:6px">صنع بـ ❤️ بواسطة <a href="/cdn-cgi/l/email-protection#29484b4d464841444c4d445b18694e44484045074a4644">عبده أحمد</a></p>
     </div>
     <nav class="footer-links">
       <a href="#" onclick="showPage('home')">الرئيسية</a>
@@ -1124,12 +1225,15 @@ var videoFile = null;
 var selectedFormat = 'original';
 var processedBlob = null;
 var isProcessing = false;
+var currentMode = 'manual';
+var allClips = [];
+var sharedAudioCtx = null;
+var audioSourceNode = null;
 
 // ─── INIT ───
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('page-home').style.display = 'block';
   initReveal();
-
   var zone = document.getElementById('uploadZone');
   if (zone) {
     zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
@@ -1137,26 +1241,58 @@ document.addEventListener('DOMContentLoaded', function() {
     zone.addEventListener('drop', function(e) {
       e.preventDefault(); zone.classList.remove('drag-over');
       var f = e.dataTransfer.files[0];
-      if (f && f.type.startsWith('video/')) {
-        window.handleVideoUpload({ target: { files: [f] } });
-      }
+      if (f && f.type.startsWith('video/')) window.handleVideoUpload({ target: { files: [f] } });
     });
   }
-  initReveal();
+  var cd = document.getElementById('clipDuration');
+  if (cd) cd.addEventListener('input', updateSplitPreview);
 });
+
+// ─── MODE SWITCH ───
+window.switchMode = function(mode) {
+  currentMode = mode;
+  document.getElementById('tab-manual').classList.toggle('active', mode === 'manual');
+  document.getElementById('tab-auto').classList.toggle('active', mode === 'auto');
+  document.getElementById('mode-manual').style.display = mode === 'manual' ? 'block' : 'none';
+  document.getElementById('mode-auto').style.display = mode === 'auto' ? 'block' : 'none';
+  if (mode === 'auto') updateSplitPreview();
+};
+
+function updateSplitPreview() {
+  var vid = document.getElementById('videoPreview');
+  if (!vid || !vid.duration) return;
+  var dur = parseFloat(document.getElementById('clipDuration').value) || 30;
+  var total = vid.duration;
+  var count = Math.ceil(total / dur);
+  var html = '<p style="font-size:0.8rem;color:var(--text2);margin-bottom:8px;">سيتم إنشاء <strong style="color:var(--accent)">' + count + ' كليب</strong></p>';
+  for (var i = 0; i < count; i++) {
+    var s = (i * dur).toFixed(0);
+    var e = Math.min((i + 1) * dur, total).toFixed(0);
+    html += '<span class="split-badge">' + s + 's → ' + e + 's</span>';
+  }
+  document.getElementById('autoSplitPreview').innerHTML = html;
+}
 
 // ─── VIDEO UPLOAD ───
 window.handleVideoUpload = function(e) {
   videoFile = e.target.files[0];
   if (!videoFile) return;
+  // Revoke old audio context so we can re-connect the new video element
+  if (sharedAudioCtx) { try { sharedAudioCtx.close(); } catch(x) {} }
+  sharedAudioCtx = null; audioSourceNode = null;
+
   var url = URL.createObjectURL(videoFile);
   var vid = document.getElementById('videoPreview');
   vid.src = url;
   vid.onloadedmetadata = function() {
     document.getElementById('endTime').value = Math.min(vid.duration, 60).toFixed(1);
+    updateSplitPreview();
   };
   document.getElementById('editorPanel').classList.add('visible');
   document.getElementById('uploadZone').style.display = 'none';
+  document.getElementById('clipsGallery').style.display = 'none';
+  document.getElementById('clipsGrid').innerHTML = '';
+  allClips = [];
 };
 
 window.selectFormat = function(fmt) {
@@ -1174,10 +1310,114 @@ function setProgress(pct, label, stage) {
   if (stage) document.getElementById('progressStage').textContent = stage;
 }
 
-// ─── REAL VIDEO PROCESSING via MediaRecorder + Canvas ───
+// ════════════════════════════════════════════════
+//  CORE ENGINE — records one segment WITH AUDIO
+//  Uses Web Audio API to capture audio from <video>
+//  and merge it with canvas video stream
+// ════════════════════════════════════════════════
+function recordSegment(vid, startSec, endSec, fmt, overlayTxt, txtPos, onFrameCb) {
+  return new Promise(function(resolve, reject) {
+    var duration = endSec - startSec;
+    var vw = vid.videoWidth || 640, vh = vid.videoHeight || 360;
+    var cw, ch;
+    if (fmt === 'vertical')    { cw = 608;  ch = 1080; }
+    else if (fmt === 'square') { cw = 720;  ch = 720;  }
+    else                       { cw = vw;   ch = vh;   }
+    cw = cw % 2 === 0 ? cw : cw - 1;
+    ch = ch % 2 === 0 ? ch : ch - 1;
+
+    var canvas = document.getElementById('resultCanvas');
+    canvas.width = cw; canvas.height = ch;
+    var ctx = canvas.getContext('2d');
+
+    // ── Build combined stream (video canvas + audio from element) ──
+    var videoStream = canvas.captureStream(30);
+    var combinedStream;
+
+    try {
+      // One AudioContext per page lifetime — reuse it
+      if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
+        sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
+
+      // Connect source only once per video element
+      if (!audioSourceNode) {
+        audioSourceNode = sharedAudioCtx.createMediaElementSource(vid);
+        audioSourceNode.connect(sharedAudioCtx.destination); // keep speakers working
+      }
+      var dest = sharedAudioCtx.createMediaStreamDestination();
+      audioSourceNode.connect(dest);
+
+      var audioTrack = dest.stream.getAudioTracks()[0];
+      combinedStream = new MediaStream(
+        videoStream.getVideoTracks().concat(audioTrack ? [audioTrack] : [])
+      );
+
+      // Disconnect from dest after recording stops (cleanup)
+      vid._audioDestNode = dest;
+      vid._audioSrcNode  = audioSourceNode;
+    } catch (audioErr) {
+      // Fallback: silent video — still functional
+      combinedStream = videoStream;
+    }
+
+    var mimeTypes = [
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm;codecs=vp9',
+      'video/webm;codecs=vp8',
+      'video/webm'
+    ];
+    var mime = mimeTypes.find(function(m) { return MediaRecorder.isTypeSupported(m); }) || 'video/webm';
+    var recorder = new MediaRecorder(combinedStream, { mimeType: mime, videoBitsPerSecond: 4000000 });
+    var chunks = [];
+
+    recorder.ondataavailable = function(ev) { if (ev.data && ev.data.size > 0) chunks.push(ev.data); };
+    recorder.onstop = function() {
+      // Disconnect audio dest to avoid multiple connections on next segment
+      try { if (vid._audioDestNode) vid._audioSrcNode.disconnect(vid._audioDestNode); } catch(x) {}
+      resolve(new Blob(chunks, { type: mime }));
+    };
+    recorder.onerror = function(ev) { reject(ev.error || new Error('recorder error')); };
+
+    // ── Seek → play → draw frames ──
+    vid.currentTime = startSec;
+    vid.onseeked = function() {
+      vid.onseeked = null;
+      recorder.start(80);
+      vid.muted = false;
+      vid.playbackRate = 1;
+      vid.play().catch(function() {});
+
+      var fps = 30, totalFrames = Math.ceil(duration * fps), frame = 0;
+      function loop() {
+        var elapsed = frame / fps;
+        if (elapsed >= duration) {
+          vid.pause();
+          if (recorder.state === 'recording') recorder.stop();
+          return;
+        }
+        drawFrame(ctx, vid, cw, ch, vw, vh, overlayTxt, txtPos);
+        frame++;
+        if (onFrameCb) onFrameCb(frame, totalFrames);
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      setTimeout(function() {
+        vid.pause();
+        if (recorder.state === 'recording') recorder.stop();
+      }, duration * 1000 + 1000);
+    };
+  });
+}
+
+// ════════════════════════════════════════════════
+//  MANUAL MODE
+// ════════════════════════════════════════════════
 window.processVideo = async function() {
   if (!videoFile || isProcessing) return;
-
   var startTime   = parseFloat(document.getElementById('startTime').value) || 0;
   var endTime     = parseFloat(document.getElementById('endTime').value)   || 10;
   var overlayText = document.getElementById('overlayText').value.trim();
@@ -1187,136 +1427,162 @@ window.processVideo = async function() {
   if (endTime <= startTime) { alert('وقت النهاية لازم يكون أكبر من وقت البداية!'); return; }
   var duration = endTime - startTime;
 
-  isProcessing = true;
-  processedBlob = null;
+  isProcessing = true; processedBlob = null;
   document.getElementById('progressWrap').style.display = 'block';
   document.getElementById('progressBar').classList.add('running');
   document.getElementById('resultWrap').style.display = 'none';
   document.getElementById('downloadBtn').disabled = true;
+  document.getElementById('clipsGallery').style.display = 'none';
+  setProgress(5, 'تحضير الفيديو مع الصوت...', 'تهيئة Web Audio API...');
 
-  setProgress(5, 'تحضير الفيديو...', 'جاري تحليل ملف الفيديو...');
-
-  await seekTo(vid, startTime);
-  setProgress(10, 'إعداد Canvas...', 'ضبط أبعاد الإطار...');
-
-  var vw = vid.videoWidth  || 640;
-  var vh = vid.videoHeight || 360;
-  var cw, ch;
-  if (selectedFormat === 'vertical')    { cw = 608;  ch = 1080; }
-  else if (selectedFormat === 'square') { cw = 720;  ch = 720;  }
-  else                                  { cw = vw;   ch = vh;   }
-  cw = cw % 2 === 0 ? cw : cw - 1;
-  ch = ch % 2 === 0 ? ch : ch - 1;
-
-  var canvas = document.getElementById('resultCanvas');
-  canvas.width = cw; canvas.height = ch;
-  var ctx = canvas.getContext('2d');
-
-  var mimeTypes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
-  var mime = mimeTypes.find(function(m) { return MediaRecorder.isTypeSupported(m); }) || 'video/webm';
-
-  setProgress(15, 'بدء التسجيل...', 'صيغة الترميز: ' + mime);
-
-  var stream   = canvas.captureStream(30);
-  var recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 4000000 });
-  var chunks   = [];
-
-  recorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
-
-  recorder.onstop = function() {
-    processedBlob = new Blob(chunks, { type: mime });
+  try {
+    processedBlob = await recordSegment(vid, startTime, endTime, selectedFormat, overlayText, textPos,
+      function(frame, total) {
+        var pct = 10 + (frame / total) * 85;
+        setProgress(Math.min(pct, 95),
+          'معالجة الفيديو + الصوت... ' + frame + '/' + total + ' إطار',
+          'الوقت: ' + (startTime + frame/30).toFixed(1) + 's — ' + Math.round(pct) + '%'
+        );
+      }
+    );
     var url = URL.createObjectURL(processedBlob);
-    var rv  = document.getElementById('resultVideo');
-    rv.src  = url;
+    document.getElementById('resultVideo').src = url;
     document.getElementById('resultWrap').style.display = 'block';
     document.getElementById('downloadBtn').disabled = false;
     document.getElementById('progressBar').classList.remove('running');
-    setProgress(100, '✅ اكتملت المعالجة!', 'تم تجهيز ' + duration.toFixed(1) + ' ثانية من الفيديو بنجاح');
-    isProcessing = false;
+    setProgress(100, '✅ اكتمل — الفيديو بالصوت جاهز!', 'مدة الكليب: ' + duration.toFixed(1) + ' ثانية');
     setTimeout(function() { document.getElementById('progressWrap').style.display = 'none'; }, 3500);
-  };
-
-  recorder.start(100);
-
-  var fps         = 30;
-  var totalFrames = Math.ceil(duration * fps);
-  var frame       = 0;
-
-  vid.playbackRate = 1;
-  vid.muted = true;
-  vid.play().catch(function() {});
-
-  function renderLoop() {
-    if (!isProcessing) { try { recorder.stop(); } catch(e) {} return; }
-    var elapsed = frame / fps;
-    if (elapsed > duration) {
-      vid.pause();
-      if (recorder.state === 'recording') recorder.stop();
-      return;
-    }
-    drawFrame(ctx, vid, cw, ch, vw, vh, overlayText, textPos);
-    frame++;
-    var pct = 15 + (frame / totalFrames) * 80;
-    setProgress(
-      Math.min(pct, 95),
-      'معالجة الفيديو... ' + frame + ' / ' + totalFrames + ' إطار',
-      'الوقت: ' + (startTime + elapsed).toFixed(1) + 's — ' + Math.round(pct) + '%'
-    );
-    requestAnimationFrame(renderLoop);
+  } catch(err) {
+    setProgress(0, '❌ خطأ: ' + (err.message || err), '');
+    document.getElementById('progressBar').classList.remove('running');
   }
-  requestAnimationFrame(renderLoop);
-
-  setTimeout(function() {
-    if (isProcessing) { vid.pause(); if (recorder.state === 'recording') recorder.stop(); }
-  }, (duration * 1000) + 800);
+  isProcessing = false;
 };
 
+// ════════════════════════════════════════════════
+//  AUTO SPLIT MODE
+// ════════════════════════════════════════════════
+window.startAutoSplit = async function() {
+  if (!videoFile || isProcessing) return;
+  var vid      = document.getElementById('videoPreview');
+  var clipDur  = parseFloat(document.getElementById('clipDuration').value) || 30;
+  var fmt      = document.getElementById('autoFormat').value;
+  var txtTpl   = document.getElementById('autoOverlayText').value.trim();
+  var txtPos   = document.getElementById('autoTextPosition').value;
+  var total    = vid.duration;
+
+  var segments = [];
+  for (var s = 0; s < total; s += clipDur)
+    segments.push({ start: s, end: Math.min(s + clipDur, total) });
+
+  isProcessing = true; allClips = [];
+  var grid = document.getElementById('clipsGrid');
+  grid.innerHTML = '';
+  document.getElementById('clipsGallery').style.display = 'block';
+  document.getElementById('resultWrap').style.display = 'none';
+
+  // Build skeleton cards
+  segments.forEach(function(seg, i) {
+    var card = document.createElement('div');
+    card.className = 'clip-card'; card.id = 'clip-card-' + i;
+    card.innerHTML =
+      '<div class="clip-thumb" id="clip-thumb-' + i + '" style="height:130px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">⏳</div>' +
+      '<div class="clip-card-body">' +
+        '<div class="clip-title">كليب ' + (i+1) + ' / ' + segments.length + '</div>' +
+        '<div class="clip-meta">' + seg.start.toFixed(0) + 's → ' + seg.end.toFixed(0) + 's &nbsp;(' + (seg.end-seg.start).toFixed(0) + ' ث)</div>' +
+        '<span class="clip-status queued" id="clip-status-' + i + '">في الانتظار</span><br><br>' +
+        '<button class="btn-clip-dl" id="clip-dl-' + i + '" disabled onclick="downloadClip(' + i + ')">⬇️ تحميل</button>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('progressBar').classList.add('running');
+
+  for (var idx = 0; idx < segments.length; idx++) {
+    var seg = segments[idx];
+    var overlayTxt = txtTpl.replace('{n}', idx+1).replace('{total}', segments.length);
+
+    document.getElementById('clip-status-' + idx).textContent = '🔄 جاري...';
+    document.getElementById('clip-status-' + idx).className = 'clip-status processing';
+    document.getElementById('clip-thumb-' + idx).textContent = '🎬';
+
+    try {
+      // capture idx in closure
+      (function(clipIdx, clipSeg) {
+        // no-op — just to acknowledge the pattern; async/await handles scope
+      })(idx, seg);
+
+      var clipBlob = await recordSegment(vid, seg.start, seg.end, fmt, overlayTxt, txtPos,
+        function(frame, total2) {
+          var localPct  = frame / total2;
+          var globalPct = ((idx + localPct) / segments.length) * 100;
+          setProgress(Math.min(globalPct, 99),
+            'كليب ' + (idx+1) + '/' + segments.length + ' — ' + frame + '/' + total2 + ' إطار',
+            seg.start.toFixed(0) + 's → ' + seg.end.toFixed(0) + 's'
+          );
+        }
+      );
+
+      allClips[idx] = { blob: clipBlob, start: seg.start, end: seg.end };
+
+      // Replace thumb with real video
+      var card2 = document.getElementById('clip-card-' + idx);
+      var thumb = document.getElementById('clip-thumb-' + idx);
+      var blobUrl = URL.createObjectURL(clipBlob);
+      var vEl = document.createElement('video');
+      vEl.src = blobUrl; vEl.controls = true; vEl.playsinline = true;
+      vEl.style.cssText = 'width:100%;display:block;background:#000;max-height:200px;';
+      card2.replaceChild(vEl, thumb);
+      document.getElementById('clip-status-' + idx).textContent = '✅ جاهز';
+      document.getElementById('clip-status-' + idx).className = 'clip-status done';
+      document.getElementById('clip-dl-' + idx).disabled = false;
+
+    } catch(err) {
+      document.getElementById('clip-status-' + idx).textContent = '❌ خطأ';
+      document.getElementById('clip-status-' + idx).className = 'clip-status queued';
+    }
+  }
+
+  document.getElementById('progressBar').classList.remove('running');
+  setProgress(100, '✅ اكتمل التقسيم — كل الكليبات بالصوت!', 'تم إنشاء ' + segments.length + ' كليبات جاهزة للتحميل');
+  setTimeout(function() { document.getElementById('progressWrap').style.display = 'none'; }, 4000);
+  isProcessing = false;
+};
+
+// ════════════════════════════════════════════════
+//  SHARED HELPERS
+// ════════════════════════════════════════════════
 function drawFrame(ctx, vid, cw, ch, vw, vh, overlayText, textPos) {
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, cw, ch);
-  var vr = vw / vh, cr = cw / ch;
-  var dx, dy, dw, dh;
-  if (vr > cr) { dh = ch; dw = dh * vr; dx = (cw - dw) / 2; dy = 0; }
-  else         { dw = cw; dh = dw / vr; dy = (ch - dh) / 2; dx = 0; }
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cw, ch);
+  var vr = vw/vh, cr = cw/ch, dx, dy, dw, dh;
+  if (vr > cr) { dh=ch; dw=dh*vr; dx=(cw-dw)/2; dy=0; }
+  else         { dw=cw; dh=dw/vr; dy=(ch-dh)/2; dx=0; }
   ctx.drawImage(vid, dx, dy, dw, dh);
   if (overlayText) {
-    var fontSize = Math.max(cw * 0.045, 20);
+    var fontSize = Math.max(cw*0.045, 20);
     ctx.font = 'bold ' + fontSize + 'px Cairo, sans-serif';
     ctx.textAlign = 'center';
-    var tw = ctx.measureText(overlayText).width;
-    var pad = fontSize * 0.5;
-    var ty;
-    if (textPos === 'top')         ty = fontSize * 2.2;
-    else if (textPos === 'center') ty = ch / 2 + fontSize * 0.3;
-    else                           ty = ch - fontSize * 1.8;
+    var tw = ctx.measureText(overlayText).width, pad = fontSize*0.5;
+    var ty = textPos==='top' ? fontSize*2.2 : textPos==='center' ? ch/2+fontSize*0.3 : ch-fontSize*1.8;
     ctx.fillStyle = 'rgba(0,0,0,0.65)';
     ctx.beginPath();
-    var rx = cw/2 - tw/2 - pad, ry = ty - fontSize, rw = tw + pad*2, rh = fontSize * 1.5;
-    if (ctx.roundRect) ctx.roundRect(rx, ry, rw, rh, 8); else ctx.rect(rx, ry, rw, rh);
+    var rx=cw/2-tw/2-pad, ry=ty-fontSize, rw=tw+pad*2, rh=fontSize*1.5;
+    if (ctx.roundRect) ctx.roundRect(rx,ry,rw,rh,8); else ctx.rect(rx,ry,rw,rh);
     ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(overlayText, cw/2, ty);
+    ctx.fillStyle = '#fff'; ctx.fillText(overlayText, cw/2, ty);
   }
 }
 
-function seekTo(vid, t) {
-  return new Promise(function(resolve) {
-    if (Math.abs(vid.currentTime - t) < 0.1) { resolve(); return; }
-    vid.currentTime = t;
-    vid.onseeked = function() { vid.onseeked = null; resolve(); };
-  });
+function triggerDownload(blob, name) {
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-window.downloadVideo = function() {
-  if (!processedBlob) return;
-  var ext = processedBlob.type.includes('mp4') ? 'mp4' : 'webm';
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(processedBlob);
-  a.download = 'clipforge-' + Date.now() + '.' + ext;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-};
+window.downloadVideo    = function() { if (processedBlob) triggerDownload(processedBlob, 'clipforge-clip.webm'); };
+window.downloadClip     = function(i) { if (allClips[i] && allClips[i].blob) triggerDownload(allClips[i].blob, 'clipforge-clip-' + (i+1) + '.webm'); };
+window.downloadAllClips = function() { allClips.forEach(function(c,i) { if (c && c.blob) setTimeout(function(){ triggerDownload(c.blob,'clipforge-clip-'+(i+1)+'.webm'); }, i*700); }); };
 
 // ─── CONTACT FORM ───
 window.sendContactForm = function() {
